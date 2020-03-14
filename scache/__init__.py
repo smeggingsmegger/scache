@@ -55,7 +55,7 @@ class SCache():
             path = self._get_path(key, ext='csv')
             if str(type(value)) == "<class 'pandas.core.frame.DataFrame'>":
                 # Dump with pandas
-                value.to_csv(path)
+                value.to_csv(path, index=False)
             else:
                 print("Not implemented.")
         else:
