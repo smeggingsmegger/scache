@@ -20,7 +20,6 @@ class SCache():
 
     def _get_path(self, key, ext='json'):
         path = '{}{}.{}'.format(self.path, key, ext)
-        print(path)
         return path
     
     def clear(self):
@@ -90,3 +89,18 @@ class SCache():
                     print("Couldn't get value.")
 
         return value
+
+# def _get_sc(**kwargs):
+#     path = kwargs.get('path')
+#     sc = SCache(path=path)
+#     return sc
+
+# def get(*args, **kwargs):
+#     kwargs.pop('path')
+#     sc = _get_sc(*args, **kwargs)
+#     sc.get(*args, **kwargs)
+
+# def set(*args, **kwargs):
+#     kwargs.pop('path')
+#     sc = _get_sc(*args, **kwargs)
+#     sc.get(*args, **kwargs)
