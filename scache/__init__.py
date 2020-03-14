@@ -44,7 +44,7 @@ class SCache():
         if as_type == 'json':
             path = self._get_path(key, ext='json')
             if str(type(value)) == "<class 'pandas.core.frame.DataFrame'>":
-                value.to_json(path, orient='split')
+                value.to_json(path)
             else:
                 with open(path, 'w+') as f:
                     if pprint:
@@ -55,7 +55,7 @@ class SCache():
             path = self._get_path(key, ext='csv')
             if str(type(value)) == "<class 'pandas.core.frame.DataFrame'>":
                 # Dump with pandas
-                value.to_csv(path, orient='split')
+                value.to_csv(path)
             else:
                 print("Not implemented.")
         else:
