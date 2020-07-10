@@ -8,6 +8,7 @@ try:
 except ImportError:
     pd = None
 
+import csv
 import os
 
 
@@ -57,23 +58,31 @@ class SCache():
                 # Dump with pandas
                 value.to_csv(path, index=False)
             else:
-                print("Not implemented.")
+                with open(path, 'w') as csvfile:
+                    writer = csv.writer(csvfile, delimeter=',')
+                    writer.writerows(value)
         else:
             print("Unsupported file type.")
 
 
-    def get(self, key, fallback=dict(), ext='json', as_pandas=False):
+    def get(self, key, fallback=dict(), ext='json', as_pandas=False, **kwargs):
         path = self._get_path(key, ext=ext)
         value = fallback
+        na_filter = kwargs.get('na_filter', True)
         if as_pandas:
             if pd:
                 if self.exists(key, ext=ext):
                     if ext == 'json':
-                        value = pd.read_json(path)
+                        value = pd.read_json(path, na_filter=na_filter)
                     elif ext == 'csv':
-                        value = pd.read_csv(path)
+                        value = pd.read_csv(path, na_filter=na_filter)
                     else:
-                        print("Not implemented.")
+                        with open(path) as csvfile:
+                            value = []
+                            reader = csv.reader(csvfile, delimiter=',')
+                            for row in reader:
+                                value.append(row)
+
                 else:
                     if self.debug:
                         print("Couldn't get value.")
