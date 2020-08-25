@@ -12,6 +12,33 @@ import csv
 import os
 
 
+def colnum_string(n):
+    string = ""
+    while n > 0:
+        n, remainder = divmod(n - 1, 26)
+        string = chr(65 + remainder) + string
+    return string
+
+
+def index_to_letters(n):
+    m = n + 1
+    return colnum_string(m)
+
+
+def col_to_index(name):
+    pow = 1
+    col_num = 0
+    for letter in name[::-1]:
+        col_num += (int(letter, 36) -9) * pow
+        pow *= 26
+    return col_num - 1
+
+
+def colname_to_cell(name, row_num, the_list):
+    idx = the_list.index(name)
+    return '{}{}'.format(index_to_letters(idx), row_num)
+
+
 class SCache():
     def __init__(self, path='./data/', debug=False):
         self.path = path
@@ -22,7 +49,7 @@ class SCache():
     def _get_path(self, key, ext='json'):
         path = '{}{}.{}'.format(self.path, key, ext)
         return path
-    
+
     def clear(self):
         for file_name in os.listdir(self.path):
             if file_name.endswith('.json') or file_name.endswith('.csv'):
@@ -40,7 +67,7 @@ class SCache():
         path = self._get_path(key, ext=ext)
         exst = os.path.exists(path)
         return exst
-        
+
     def set(self, key, value, pprint=True, as_type='json'):
         if as_type == 'json':
             path = self._get_path(key, ext='json')
@@ -59,7 +86,7 @@ class SCache():
                 value.to_csv(path, index=False)
             else:
                 with open(path, 'w') as csvfile:
-                    writer = csv.writer(csvfile, delimeter=',')
+                    writer = csv.writer(csvfile, delimiter=',')
                     writer.writerows(value)
         else:
             print("Unsupported file type.")
@@ -90,9 +117,17 @@ class SCache():
                 print("Pandas is not installed.")
         else:
             if self.exists(key, ext=ext):
-                with open(path, 'r') as f:
-                    _value = f.read()
-                    value = json.loads(_value)
+                if ext == 'json':
+                    with open(path, 'r') as f:
+                        _value = f.read()
+                        value = json.loads(_value)
+                else:
+                    with open(path) as csvfile:
+                        value = []
+                        reader = csv.reader(csvfile, delimiter=',')
+                        for row in reader:
+                            value.append(row)
+
             else:
                 if self.debug:
                     print("Couldn't get value.")
